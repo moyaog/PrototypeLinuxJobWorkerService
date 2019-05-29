@@ -10,12 +10,16 @@ public class ExecuteJobs {
   }
 
   public int stop(long pid) throws IOException {
+    final static int ERR_SUCCESS = 0;
+    final static int ERR_FAILED_TO_KILL = 1;
+    final static int ERR_FAILED_TO_FIND = 2;
+
     Process p = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
     BufferedReader pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
     String s = pInput.readLine();
     if(s == null) {
       // pid not found
-      return 2;
+      return ERR_FAILED_TO_FIND;
     }
 
     Runtime.getRuntime().exec("kill " + pid);
@@ -37,11 +41,11 @@ public class ExecuteJobs {
       s = pInput.readLine();
       if(s != null) {
         // Failed to kill pid
-        return 1;
+        return ERR_FAILED_TO_KILL;
       }
     }
     // Successfully killed pid
-    return 0;     
+    return ERR_SUCCESS;     
   }
 
   public String query(long pid) throws IOException {

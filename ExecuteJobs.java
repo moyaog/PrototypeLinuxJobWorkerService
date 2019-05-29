@@ -2,60 +2,51 @@ import java.util.*;
 import java.io.*;
 
 public class ExecuteJobs {
-  public long start(String process) throws IOException {
-    // TODO some error handling
-    Process p = Runtime.getRuntime().exec(process);
-    long pid = p.pid();
+  final int ERR_SUCCESS = 0;
+  final int ERR_FAILED_TO_KILL = 1;
+  final int ERR_FAILED_TO_FIND = 2;
+
+  public long start(String sProcess) throws IOException {
+    Process process = Runtime.getRuntime().exec(sProcess);
+    long pid = process.pid();
     return pid;
   }
 
-  public int stop(long pid) throws IOException {
-    final static int ERR_SUCCESS = 0;
-    final static int ERR_FAILED_TO_KILL = 1;
-    final static int ERR_FAILED_TO_FIND = 2;
+  public ErrorInfo stop(long pid) throws IOException {
+    ErrorInfo errorInfo = new ErrorInfo();
 
-    Process p = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
-    BufferedReader pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-    String s = pInput.readLine();
-    if(s == null) {
-      // pid not found
-      return ERR_FAILED_TO_FIND;
+    String status = getProcessStatus(pid);
+    if(status == null) {
+      errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
+      errorInfo.setErrorMessage("Failed to find PID " + pid + ". PID was not killed.");
+      return errorInfo;
     }
 
     Runtime.getRuntime().exec("kill " + pid);
-    p = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
-    pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-    s = pInput.readLine();
-    if(s != null) {
-      for(int i = 0; i < 5; i++) {
-        s = null;
-        p = Runtime.getRuntime().exec("kill " + pid);
-        pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        s = pInput.readLine();
-        if(s == null) {
-          break;
-        }
-      }
-      s = null;
-      pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      s = pInput.readLine();
-      if(s != null) {
-        // Failed to kill pid
-        return ERR_FAILED_TO_KILL;
-      }
+    status = getProcessStatus(pid);
+    if(status != null) {
+      errorInfo.setErrorCode(ERR_FAILED_TO_KILL);
+      errorInfo.setErrorMessage("Failed to kill " + pid);
+      return errorInfo;
     }
-    // Successfully killed pid
-    return ERR_SUCCESS;     
+
+    errorInfo.setErrorCode(ERR_SUCCESS);
+    errorInfo.setErrorMessage("Successfully killed " + pid);
+    return errorInfo;     
   }
 
-  public String query(long pid) throws IOException {
-    Process p = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
-    BufferedReader pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-    String s = pInput.readLine();
-    if(s == null) {
-      return pid + " not found";
+  public ErrorInfo query(long pid) throws IOException {
+    ErrorInfo errorInfo = new ErrorInfo();
+
+    String status = getProcessStatus(pid);
+    if(status == null) {
+      errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
+      errorInfo.setErrorMessage("Failed to find PID " + pid);
+      return errorInfo;
     }
-    return s;
+    errorInfo.setErrorCode(ERR_SUCCESS);
+    errorInfo.setErrorMessage("PID " + pid + " status: " + status);
+    return errorInfo;
   }
 
   public ArrayList<String> currentJobStatus(ArrayList<Long> pids) throws IOException {
@@ -64,21 +55,27 @@ public class ExecuteJobs {
     int i = 0;
     while(i < pids.size()) {
       Long pid = pids.get(i);
-      Process p = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
-      BufferedReader pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      String status = pInput.readLine();
+      String status = getProcessStatus(pid);
       if(status == null) {
         pids.remove(pid);
         continue;
       }
-      p = Runtime.getRuntime().exec("ps -p " + pid + " -o comm=");
-      pInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      String name = pInput.readLine();
+      Process process = Runtime.getRuntime().exec("ps -p " + pid + " -o comm=");
+      BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      String name = processInput.readLine();
       String result = name + " " + status + " " + pid;
       statuses.add(result);
       i++;
     }
 
     return statuses;
+  }
+  
+  private String getProcessStatus(long pid) throws IOException {
+    // This implementation method allows the user to pass in any pid
+    // The user can get the status of any PID running on the system
+    Process process = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
+    BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    return processInput.readLine();
   }
 }

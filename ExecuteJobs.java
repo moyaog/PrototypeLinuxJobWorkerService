@@ -1,15 +1,28 @@
+import java.util.stream.*;
 import java.util.*;
 import java.io.*;
+//import java.util.Stream;
 
 public class ExecuteJobs {
-  final int ERR_SUCCESS = 0;
-  final int ERR_FAILED_TO_KILL = 1;
-  final int ERR_FAILED_TO_FIND = 2;
+  private static final int ERR_SUCCESS = 0;
+  private static final int ERR_FAILED_TO_KILL = 1;
+  private static final int ERR_FAILED_TO_FIND = 2;
+  private static final int ERR_FAILED_TO_START = 3;
 
-  public long start(String sProcess) throws IOException {
+  public ErrorInfo start(String sProcess) throws IOException {
+    ErrorInfo errorInfo = new ErrorInfo();
     Process process = Runtime.getRuntime().exec(sProcess);
-    long pid = process.pid();
-    return pid;
+
+    ErrorInfo errorStatus = getProcessStatus(process.pid());
+    if(errorStatus.getIoMessage() == null) {
+      errorInfo.setErrorCode(ERR_FAILED_TO_START);
+      errorInfo.setIoMessage("Failed to start " + sProcess);
+      return errorInfo;
+    }
+    errorInfo.setErrorCode(ERR_SUCCESS);
+    errorInfo.setIoMessage("Successfully start " + sProcess);
+    errorInfo.setPid(process.pid());
+    return errorInfo;
   }
 
   public ErrorInfo stop(long pid) throws IOException {
@@ -42,23 +55,25 @@ public class ExecuteJobs {
     if(errorStatus.getIoMessage() == null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
       errorInfo.setIoMessage("Failed to find PID " + pid);
+      errorInfo.setErrorMessage(errorStatus.getIoMessage());
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
     errorInfo.setIoMessage("PID " + pid + " status: " + errorStatus.getIoMessage());
+    errorInfo.setErrorMessage(errorStatus.getIoMessage());
     return errorInfo;
   }
 
-  public ArrayList<ErrorInfo> currentJobStatus(ArrayList<Long> pids) throws IOException {
+  public ArrayList<ErrorInfo> currentJobStatus(ArrayList<ErrorInfo> pids) throws IOException {
     ArrayList<ErrorInfo> statuses = new ArrayList<ErrorInfo>();
 
     int i = 0;
     while(i < pids.size()) {
-      Long pid = pids.get(i);
+      Long pid = pids.get(i).getPid();
       ErrorInfo errorStatus = getProcessStatus(pid);
       ErrorInfo temp = new ErrorInfo();
       if(errorStatus.getIoMessage() == null) {
-        pids.remove(pid);
+        pids.remove(i);
         continue;
       }
       Process process = Runtime.getRuntime().exec("ps -p " + pid + " -o comm=");
@@ -77,21 +92,20 @@ public class ExecuteJobs {
   public ErrorInfo getOutputOfRunningJob(long pid) throws IOException {
     ErrorInfo errorInfo = new ErrorInfo();
 
-    Process process = Runtime.getRuntime().exec("ps " + pid);
+    Process process = Runtime.getRuntime().exec("cat /proc/" + pid + "/fd/1");
     BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
     BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-    String inputStatus = processInput.readLine();
-    String errorStatus = processError.readLine();
-    if(inputStatus == null) {
+    Stream<String> inputStream = processInput.lines();
+    Stream<String> errorStream = processError.lines();
+
+    if(errorStream.count() > 0) {
       errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
-      errorInfo.setErrorMessage(errorStatus);
-      errorInfo.setIoMessage("Failed to find PID " + pid);
+      errorInfo.setErrorMessage("Failed to find PID " + pid);
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
-    errorInfo.setErrorMessage(errorStatus);
-    errorInfo.setIoMessage(inputStatus);
+    errorInfo.setErrorMessage(inputStream.collect(Collectors.joining()));
     return errorInfo;
   }
   

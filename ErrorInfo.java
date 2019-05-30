@@ -1,4 +1,6 @@
+import java.util.stream.*;
 import java.io.Serializable;
+import java.util.*;
 
 public class ErrorInfo implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -6,11 +8,13 @@ public class ErrorInfo implements Serializable {
   private Integer errorCode;
   private String ioMessage;
   private String errorMessage;
+  private Long pid;
 
   ErrorInfo() {
     this.errorCode = null;
     this.ioMessage = null;
     this.errorMessage = null;
+    this.pid = null;
   }
 
   public void setErrorCode(int errorCode) {
@@ -36,4 +40,13 @@ public class ErrorInfo implements Serializable {
   public String getErrorMessage() {
     return this.errorMessage;
   }
+
+  public void setPid(Long pid) {
+    this.pid = pid;
+  }
+
+  public Long getPid() {
+    return this.pid;
+  }
+
 }

@@ -45,15 +45,14 @@ public class ParseJson {
       messageParams.put(RESULT, response);
     }
     if(jsonObj.has(PARAMS)) {
-      System.out.println("Parse");
       JSONObject params = jsonObj.getJSONObject(PARAMS);
-      System.out.println("params");
       Request request = new Request();
       if(!JSONObject.NULL.equals(params.get(PROCESS))) {
         request.setProcess((String)params.get(PROCESS));
       }
       if(!JSONObject.NULL.equals(params.get(PID))) {
-        request.setPid((Long)params.get(PID));
+        Long tempPid = ((Number)params.get(PID)).longValue();
+        request.setPid((tempPid));
       }
       messageParams.put(PARAMS, request);
     }

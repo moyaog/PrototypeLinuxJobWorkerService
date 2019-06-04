@@ -14,12 +14,8 @@ public class ParseJson {
     if(jsonObj.has(RESULT)) {
       JSONObject res = jsonObj.getJSONObject(RESULT);
       Response response = new Response();
-      // If running jobs is not null
-        // Update running jobs
-      // If error result is not null
-        // Update error result
-      System.out.println("Checking if running jobs are present");
       if(!JSONObject.NULL.equals(res.get(RUNNING_JOBS))) {
+        // TODO improve
         System.out.println("Running jobs present");
         System.out.println("Running jobs " +  res.get(RUNNING_JOBS));
         @SuppressWarnings("unchecked")
@@ -28,14 +24,8 @@ public class ParseJson {
         response.setRunningJobs(test);
       }
       if(!JSONObject.NULL.equals(res.get(ERROR_INFO))) {
-        // TODO create ErrorInfo, set data members, add to response
-        System.out.println("Error info present");
         JSONObject err = res.getJSONObject(ERROR_INFO);
         ErrorInfo errorInfo = new ErrorInfo();
-        // TODO check for error code
-        // TODO check for ioMessage
-        // TODO check for errorMessage
-        // TODO check for PID
         if(!JSONObject.NULL.equals(err.get(ERROR_CODE))) {
           errorInfo.setErrorCode((Integer)err.get(ERROR_CODE));
         }
@@ -46,7 +36,8 @@ public class ParseJson {
           errorInfo.setErrorMessage((String)err.get(ERROR_MESSAGE));
         }
         if(!JSONObject.NULL.equals(err.get(PID))) {
-          errorInfo.setPid((Long)err.get(PID));
+          Long tempPid = ((Number)err.get(PID)).longValue();
+          errorInfo.setPid(tempPid);
         }
         response.setErrorInfo(errorInfo);
       }
@@ -64,7 +55,6 @@ public class ParseJson {
       }
       messageParams.put(PARAMS, request);
     }
-    System.out.println("parse ID");
     messageParams.put(ID, jsonObj.get(ID));
 
     return messageParams;

@@ -11,7 +11,7 @@ public class ExecuteJobs {
     ErrorInfo errorStatus = getProcessStatus(process.pid());
     if(errorStatus.getIoMessage() == null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_START);
-      errorInfo.setIoMessage("Failed to start " + sProcess);
+      errorInfo.setErrorMessage("Failed to start " + sProcess);
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
@@ -26,7 +26,7 @@ public class ExecuteJobs {
     ErrorInfo errorStatus = getProcessStatus(pid);
     if(errorStatus.getIoMessage() == null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
-      errorInfo.setIoMessage("Failed to find PID " + pid + ". PID was not killed.");
+      errorInfo.setErrorMessage("Failed to find PID " + pid + ". PID was not killed.");
       return errorInfo;
     }
 
@@ -34,7 +34,7 @@ public class ExecuteJobs {
     errorStatus = getProcessStatus(pid);
     if(errorStatus.getIoMessage() != null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_KILL);
-      errorInfo.setIoMessage("Failed to kill " + pid);
+      errorInfo.setErrorMessage("Failed to kill " + pid);
       return errorInfo;
     }
 
@@ -49,8 +49,8 @@ public class ExecuteJobs {
     ErrorInfo errorStatus = getProcessStatus(pid);
     if(errorStatus.getIoMessage() == null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_FIND);
-      errorInfo.setIoMessage("Failed to find PID " + pid);
-      errorInfo.setErrorMessage(errorStatus.getIoMessage());
+      errorInfo.setErrorMessage("Failed to find PID " + pid);
+      errorInfo.setIoMessage(errorStatus.getIoMessage());
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
@@ -100,7 +100,7 @@ public class ExecuteJobs {
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
-    errorInfo.setErrorMessage(inputStream.collect(Collectors.joining()));
+    errorInfo.setIoMessage(inputStream.collect(Collectors.joining()));
     return errorInfo;
   }
   

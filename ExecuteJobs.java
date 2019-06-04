@@ -17,7 +17,7 @@ public class ExecuteJobs {
       return errorInfo;
     }
     errorInfo.setErrorCode(ERR_SUCCESS);
-    errorInfo.setIoMessage("Successfully start " + sProcess);
+    errorInfo.setIoMessage("Successfully started " + sProcess);
     errorInfo.setPid(process.pid());
     return errorInfo;
   }

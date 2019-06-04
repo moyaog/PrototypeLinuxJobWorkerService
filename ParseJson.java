@@ -45,7 +45,9 @@ public class ParseJson {
       messageParams.put(RESULT, response);
     }
     if(jsonObj.has(PARAMS)) {
+      System.out.println("Parse");
       JSONObject params = jsonObj.getJSONObject(PARAMS);
+      System.out.println("params");
       Request request = new Request();
       if(!JSONObject.NULL.equals(params.get(PROCESS))) {
         request.setProcess((String)params.get(PROCESS));

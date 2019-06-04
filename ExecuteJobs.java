@@ -4,11 +4,6 @@ import java.io.*;
 //import java.util.Stream;
 
 public class ExecuteJobs {
-  private static final int ERR_SUCCESS = 0;
-  private static final int ERR_FAILED_TO_KILL = 1;
-  private static final int ERR_FAILED_TO_FIND = 2;
-  private static final int ERR_FAILED_TO_START = 3;
-
   public ErrorInfo start(String sProcess) throws IOException {
     ErrorInfo errorInfo = new ErrorInfo();
     Process process = Runtime.getRuntime().exec(sProcess);

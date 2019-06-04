@@ -12,23 +12,48 @@ public class ParseJson {
       messageParams.put(METHOD, jsonObj.getString(METHOD));
     } 
     if(jsonObj.has(RESULT)) {
-      messageParams.put(RESULT, jsonObj.get(RESULT));
+      JSONObject res = jsonObj.getJSONObject(RESULT);
+      Response response = new Response();
+      if(!JSONObject.NULL.equals(res.get(RUNNING_JOBS))) {
+        // TODO improve
+        System.out.println("Running jobs present");
+        System.out.println("Running jobs " +  res.get(RUNNING_JOBS));
+        @SuppressWarnings("unchecked")
+        ArrayList<ErrorInfo> test = (ArrayList<ErrorInfo>)res.get(RUNNING_JOBS);
+        //response.setRunningJobs((ArrayList<ErrorInfo>)res.get(RUNNING_JOBS));
+        response.setRunningJobs(test);
+      }
+      if(!JSONObject.NULL.equals(res.get(ERROR_INFO))) {
+        JSONObject err = res.getJSONObject(ERROR_INFO);
+        ErrorInfo errorInfo = new ErrorInfo();
+        if(!JSONObject.NULL.equals(err.get(ERROR_CODE))) {
+          errorInfo.setErrorCode((Integer)err.get(ERROR_CODE));
+        }
+        if(!JSONObject.NULL.equals(err.get(IO_MESSAGE))) {
+          errorInfo.setIoMessage((String)err.get(IO_MESSAGE));
+        }
+        if(!JSONObject.NULL.equals(err.get(ERROR_MESSAGE))) {
+          errorInfo.setErrorMessage((String)err.get(ERROR_MESSAGE));
+        }
+        if(!JSONObject.NULL.equals(err.get(PID))) {
+          Long tempPid = ((Number)err.get(PID)).longValue();
+          errorInfo.setPid(tempPid);
+        }
+        response.setErrorInfo(errorInfo);
+      }
+      
+      messageParams.put(RESULT, response);
     }
     if(jsonObj.has(PARAMS)) {
-      System.out.println(jsonObj.toString());
-      System.out.println(jsonObj.get(PARAMS).toString());
-      JSONObject param = new JSONObject(jsonObj.get(PARAMS));
+      JSONObject params = jsonObj.getJSONObject(PARAMS);
       Request request = new Request();
-      System.out.println(param.toString());
-      /*if(!JSONObject.NULL.equals(param.get(PROCESS))) {
-        //messageParams.put(PROCESS, param.get(PROCESS));
-        request.setProcess(param.get(PROCESS));
+      if(!JSONObject.NULL.equals(params.get(PROCESS))) {
+        request.setProcess((String)params.get(PROCESS));
       }
-      if(!JSONObject.NULL.equals(param.get(PID))) {
-        request.setPid(param.get(PID));
+      if(!JSONObject.NULL.equals(params.get(PID))) {
+        request.setPid((Long)params.get(PID));
       }
-      //messageParams.put(PARAMS, jsonObj.get(PARAMS));
-      messageParams.put(PARAMS, request);*/
+      messageParams.put(PARAMS, request);
     }
     messageParams.put(ID, jsonObj.get(ID));
 

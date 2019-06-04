@@ -18,4 +18,13 @@ public class Constants{
   public static final String REQUEST = "request";
   public static final String RESPONSE = "response";
   public static final String NOTIFICATION = "notification";
+  public static final String ERROR_CODE = "errorCode";
+  public static final String IO_MESSAGE = "ioMessage";
+  public static final String ERROR_MESSAGE = "errorMessage";
+  public static final String PID = "pid";
+  public static final String OUTPUT = "output";
+  public static final String RUNNING_JOBS = "runningJobs";
+  public static final String ERROR_INFO = "errorInfo";
+  
+  public static final int ERR_SUCCESS = 0; 
 }

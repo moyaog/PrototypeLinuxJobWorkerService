@@ -12,7 +12,6 @@ public class Request implements Serializable {
   }
 
   Request(String process, Long pid) {
-    System.out.println("in request");
     this.process = process;
     this.pid = pid;
   }

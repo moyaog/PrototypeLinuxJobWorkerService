@@ -15,14 +15,29 @@ public class ParseJson {
       JSONObject res = jsonObj.getJSONObject(RESULT);
       Response response = new Response();
       if(!JSONObject.NULL.equals(res.get(RUNNING_JOBS))) {
-        // TODO improve
-        System.out.println("Running jobs present");
-        System.out.println("Running jobs " +  res.get(RUNNING_JOBS));
-        @SuppressWarnings("unchecked")
-        ArrayList<ErrorInfo> test = (ArrayList<ErrorInfo>)res.get(RUNNING_JOBS);
-        //response.setRunningJobs((ArrayList<ErrorInfo>)res.get(RUNNING_JOBS));
-        response.setRunningJobs(test);
+        JSONArray jobArray = res.getJSONArray(RUNNING_JOBS);
+        ArrayList<ErrorInfo> errorInfoArray = new ArrayList<ErrorInfo>();
+        for(int i = 0; i < jobArray.length(); i++) {
+          // TODO create parse ErrorInfo object helper method
+          JSONObject tempJsonObj = jobArray.getJSONObject(i);
+          ErrorInfo tempErrorInfo = new ErrorInfo();
+          if(!JSONObject.NULL.equals(tempJsonObj.get(ERROR_CODE))) {
+            tempErrorInfo.setErrorCode((Integer)tempJsonObj.get(ERROR_CODE));
+          }
+          if(!JSONObject.NULL.equals(tempJsonObj.get(IO_MESSAGE))) {
+            tempErrorInfo.setIoMessage((String)tempJsonObj.get(IO_MESSAGE));
+          }
+          if(!JSONObject.NULL.equals(tempJsonObj.get(ERROR_MESSAGE))) {
+            tempErrorInfo.setErrorMessage((String)tempJsonObj.get(ERROR_MESSAGE));
+          }
+          if(!JSONObject.NULL.equals(tempJsonObj.get(PID))) {
+            tempErrorInfo.setPid(((Number)tempJsonObj.get(PID)).longValue());
+          }
+          errorInfoArray.add(tempErrorInfo);
+        }
+        response.setRunningJobs(errorInfoArray);
       }
+      // TODO call parse ErrorInfo object helper method
       if(!JSONObject.NULL.equals(res.get(ERROR_INFO))) {
         JSONObject err = res.getJSONObject(ERROR_INFO);
         ErrorInfo errorInfo = new ErrorInfo();
@@ -36,8 +51,9 @@ public class ParseJson {
           errorInfo.setErrorMessage((String)err.get(ERROR_MESSAGE));
         }
         if(!JSONObject.NULL.equals(err.get(PID))) {
-          Long tempPid = ((Number)err.get(PID)).longValue();
-          errorInfo.setPid(tempPid);
+          //Long tempPid = ((Number)err.get(PID)).longValue();
+          //errorInfo.setPid(tempPid);
+          errorInfo.setPid(((Number)err.get(PID)).longValue());
         }
         response.setErrorInfo(errorInfo);
       }

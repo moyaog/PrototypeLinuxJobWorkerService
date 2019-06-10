@@ -44,8 +44,6 @@ public class Server {
   }
 
   private static ParsedRequest receiveAndParseJsonRequest(SSLServerSocket sslServerSocket) throws Exception {
-    // TODO remove
-    System.out.println("In receiveAndParseJsonRequest");
     SSLSocket sslSocket = (SSLSocket)sslServerSocket.accept();
 
     sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
@@ -62,19 +60,12 @@ public class Server {
   }
 
   private static Response handleRequest(ParsedRequest parsedRequest, ArrayList<ErrorInfo> pids) throws Exception {
-    // TODO remove
-    System.out.println("In handleRequest");
     Response response = new Response();
     ExecuteJobs exec = new ExecuteJobs();
     ErrorInfo errorInfo = new ErrorInfo();
 
     if(parsedRequest.getMethod().equals(START)) {
-      //TODO remove
-      System.out.println("In start");
-      System.out.println(parsedRequest.getProcess());
       errorInfo = exec.start(parsedRequest.getProcess());
-      // TODO remove
-      System.out.println("Started process");
       pids.add(errorInfo);
       response.setErrorInfo(errorInfo);
     } else if(parsedRequest.getMethod().equals(STOP)) {
@@ -85,13 +76,6 @@ public class Server {
       response.setErrorInfo(errorInfo);
     } else if(parsedRequest.getMethod().equals(GET_CURRENT)) {
       ArrayList<ErrorInfo> currentJobs = exec.currentJobStatus(pids);
-      // TODO remove
-      System.out.println("In current");
-      for(int i = 0; i < currentJobs.size(); i++) {
-        System.out.println(currentJobs.get(i));
-        System.out.println(currentJobs.get(i).getIoMessage());
-        System.out.println(currentJobs.get(i).getPid());
-      }
       response.setRunningJobs(currentJobs);
     } else if(parsedRequest.getMethod().equals(OUTPUT)) {
       errorInfo = exec.getOutputOfRunningJob(parsedRequest.getPid());
@@ -108,8 +92,6 @@ public class Server {
   }
 
   private static void sendResponse(ParsedRequest parsedRequest, Response response) throws Exception {
-    // TODO remove
-    System.out.println("In sendResponse");
     JSONObject json = new JSONObject();
     BuildJson buildJson = new BuildJson();
     json = buildJson.buildResponse(response, parsedRequest.getId());

@@ -7,25 +7,19 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 public class Credentials {
-  SSLContext init(String keyLocation) {
-    try {
-      KeyStore keyStore = KeyStore.getInstance(KEY_STORE);
-      keyStore.load(new FileInputStream(keyLocation), PASSWORD.toCharArray());
+  SSLContext init(String keyLocation) throws Exception {
+    KeyStore keyStore = KeyStore.getInstance(KEY_STORE);
+    keyStore.load(new FileInputStream(keyLocation), PASSWORD.toCharArray());
 
-      KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(TRUST_MANAGER);
-      keyManagerFactory.init(keyStore, PASSWORD.toCharArray());
+    KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(TRUST_MANAGER);
+    keyManagerFactory.init(keyStore, PASSWORD.toCharArray());
 
-      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TRUST_MANAGER);
-      trustManagerFactory.init(keyStore);
+    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TRUST_MANAGER);
+    trustManagerFactory.init(keyStore);
 
-      SSLContext sslContext = SSLContext.getInstance(PROTOCOL_VER);
-      sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+    SSLContext sslContext = SSLContext.getInstance(PROTOCOL_VER);
+    sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
-      return sslContext;
-    } catch(Exception e) {
-      // TODO improve catch
-      e.printStackTrace();
-    }
-    return null;
+    return sslContext;
   }  
 }

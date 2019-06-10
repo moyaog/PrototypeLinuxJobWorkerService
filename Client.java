@@ -118,8 +118,6 @@ public class Client {
   }
 
   private static void handleResponse(ParsedResponse parsedResponse) throws Exception {
-    // TODO remove
-    System.out.println("In handle response");
     try {
       ErrorInfo errorInfo = parsedResponse.getErrorInfo();
       ArrayList<ErrorInfo> runningJobs = parsedResponse.getRunningJobs();
@@ -129,8 +127,8 @@ public class Client {
       }
       if(errorInfo != null) {
         if(errorInfo.getErrorCode() == ERR_SUCCESS) {
-          System.out.println(errorInfo.getIoMessage());
-          System.out.println(errorInfo.getErrorMessage());
+          System.out.println("IO Message: " + errorInfo.getIoMessage());
+          System.out.println("Error Message: " + errorInfo.getErrorMessage());
           if(errorInfo.getPid() != null) {
             System.out.println("PID " + errorInfo.getPid()); 
           }

@@ -4,7 +4,6 @@ import java.util.*;
 import java.io.*;
 import javax.net.ssl.SSLSocket;
 import java.lang.Object;
-//import java.io.Serializable;
 
 
 public class ParsedRequest implements Serializable {
@@ -36,9 +35,6 @@ public class ParsedRequest implements Serializable {
   }
 
   String getProcess() {
-    // TODO remove
-    System.out.println("In getProcess");
-    System.out.println(this.requestMap.get(PROCESS));
     Request request = (Request)this.requestMap.get(PARAMS);
     return request.getProcess();
   }

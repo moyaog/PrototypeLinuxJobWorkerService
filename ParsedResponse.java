@@ -44,16 +44,6 @@ public class ParsedResponse implements Serializable {
 
   ArrayList<ErrorInfo> getRunningJobs() {
     Response response = (Response)this.responseMap.get(RESULT);
-    // TODO remove
-    System.out.println("getRunningJobs()");
-    System.out.println(response.getRunningJobs());
-    for(int i = 0; i < response.getRunningJobs().size(); i++) {
-      /*System.out.println(response.getRunningJobs().get(i).getErrorCode());
-      System.out.println(response.getRunningJobs().get(i).getIoMessage());
-      System.out.println(response.getRunningJobs().get(i).getPid());*/
-      //System.out.println(response.getRunningJobs().get(i).getPid());
-      //System.out.println(response.getRunningJobs().get(i).getIoMessage());
-    }
     return response.getRunningJobs();
   }
 

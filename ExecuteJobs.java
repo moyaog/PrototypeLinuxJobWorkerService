@@ -1,4 +1,4 @@
-import my.Constants.*;
+import static my.Constants.*;
 
 import java.util.stream.*;
 import java.util.*;
@@ -115,7 +115,8 @@ public class ExecuteJobs {
   
     ErrorInfo errorInfo = new ErrorInfo();
     errorInfo.setErrorMessage(processError.readLine());
-    errorInfo.setIoMessage(processInput.readLine()); 
+    errorInfo.setIoMessage(processInput.readLine());
+    errorInfo.setPid(pid); 
     return errorInfo;
   }
 }

@@ -14,8 +14,8 @@ public class Client {
   private final static int PID_OR_PROCESS_LOC = 1;
   private final static int MIN_ARGS = 2;
 
-  public static void main(String[] args) throws JSONException {
-    ParsedResponse parsedResponse;
+  public static void main(String[] args) {
+    ParsedResponse parsedResponse = new ParsedResponse();
 
     try {
       printUserInstructions();
@@ -28,23 +28,22 @@ public class Client {
 
       handleResponse(parsedResponse);
 
+      if(parsedResponse.isInitialized()) 
+        parsedResponse.close();
     } catch(Exception e) {
       e.printStackTrace();
-    } finally {
-      if(parsedResponse != null) {
-        parsedResponse.close();
-      }
     }
   }
 
-  private void printUserInstructions() {
+  private static void printUserInstructions() {
     System.out.println("You may start a job, stop a job by PID, query a job by PID," + 
         " get the output of a running job process, or get a list of all current running jobs");
       System.out.println("Valid commands are: START <process>, STOP <pid>, QUERY <pid>," +
         " OUTPUT <pid>, and CURRENT");
   }
 
-  private JSONObject createJsonRequestFromStdin() throws Exception {
+  private static JSONObject createJsonRequestFromStdin() throws Exception {
+    JSONObject json = new JSONObject();
     BuildJson buildJson = new BuildJson();
     Request request = new Request();
 
@@ -88,11 +87,12 @@ public class Client {
     } else {
       throw new Exception("No valid command provided");
     }
+    return json;
   }
 
-  private ParsedResponse sendJsonRequest(JSONObject jsonRequest) throws Exception {
-    Credentials init = new Credentials();
-    SSLContext sslContext = init.initSsl(CLIENT_KEY_LOC);
+  private static ParsedResponse sendJsonRequest(JSONObject jsonRequest) throws Exception {
+    Credentials credentials = new Credentials();
+    SSLContext sslContext = credentials.init(CLIENT_KEY_LOC);
 
     SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
     SSLSocket sslSocket = (SSLSocket)sslSocketFactory.createSocket(HOST, PORT);
@@ -104,7 +104,7 @@ public class Client {
 
     OutputStream outputStream = sslSocket.getOutputStream();
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-    objectOutputStream.writeObject(json.toString());
+    objectOutputStream.writeObject(jsonRequest.toString());
     outputStream.flush();
 
     InputStream inputStream = sslSocket.getInputStream();
@@ -117,10 +117,12 @@ public class Client {
     return new ParsedResponse(responseMap, sslSocket);
   }
 
-  private void handleResponse(ParsedResponse parsedResponse) throws Exception {
+  private static void handleResponse(ParsedResponse parsedResponse) throws Exception {
+    // TODO remove
+    System.out.println("In handle response");
     try {
       ErrorInfo errorInfo = parsedResponse.getErrorInfo();
-      Array<ErrorInfo> runningJobs = parsedResponse.getRunningJobs();
+      ArrayList<ErrorInfo> runningJobs = parsedResponse.getRunningJobs();
 
       if(errorInfo == null && runningJobs == null){
         throw new Exception("Response is empty");
@@ -148,10 +150,10 @@ public class Client {
         return; 
       }
       
-      if(errorInfoArray.size() > 0) {
+      if(runningJobs.size() > 0) {
         System.out.println("Currently running processes:");
-        for(int i = 0; i < errorInfoArray.size(); i++) {
-          ErrorInfo tempErrorInfo = errorInfoArray.get(i);
+        for(int i = 0; i < runningJobs.size(); i++) {
+          ErrorInfo tempErrorInfo = runningJobs.get(i);
           System.out.println("PID: " + tempErrorInfo.getPid() + "\tMessage: " + tempErrorInfo.getIoMessage());
         }
       } else {
@@ -163,7 +165,7 @@ public class Client {
     }
   }
 
-  private String requestId(JSONObject jsonRequest) {
+  private static String requestId(JSONObject jsonRequest) throws Exception {
     return (String)jsonRequest.get(ID);
   }
 

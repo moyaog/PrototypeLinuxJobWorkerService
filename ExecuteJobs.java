@@ -79,6 +79,7 @@ public class ExecuteJobs {
       temp.setErrorCode(ERR_SUCCESS);
       temp.setErrorMessage(processError.readLine());
       temp.setIoMessage(processInput.readLine());
+      temp.setPid(pid);
       statuses.add(temp);
       i++;
     }

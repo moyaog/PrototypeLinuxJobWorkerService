@@ -3,20 +3,25 @@ import java.io.Serializable;
 public class Request implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private String command;
+  private String process;
   private Long pid;
 
   Request() {
-    this.command = null;
+    this.process = null;
     this.pid = null;
   }
-  
-  public void setCommand(String command) {
-    this.command = command;
+
+  Request(String process, Long pid) {
+    this.process = process;
+    this.pid = pid;
   }
 
-  public String getCommand() {
-    return this.command;
+  public void setProcess(String process) {
+    this.process = process;
+  }
+
+  public String getProcess() {
+    return this.process;
   }
 
   public void setPid(Long pid) {

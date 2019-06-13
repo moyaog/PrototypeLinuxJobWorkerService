@@ -4,47 +4,27 @@ import java.util.*;
 public class Response implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private Long pid;
-  private String queryResult;
-  private Integer stopCode;
-  private ArrayList<String> runningJobs;
+  private ArrayList<ErrorInfo> runningJobs;
+  private ErrorInfo errorInfo;
 
   Response() {
-    this.pid = null;
-    this.queryResult = null;
-    this.stopCode = null;
     this.runningJobs = null;
+    this.errorInfo = null;
   } 
 
-  public void setPid(Long pid) {
-    this.pid = pid;
-  }
-
-  public Long getPid() {
-    return this.pid;
-  }
-
-  public void setQueryResult(String queryResult) {
-    this.queryResult = queryResult;
-  }
-
-  public String getQueryResult() {
-    return this.queryResult;
-  }
-
-  public void setStopCode(Integer stopCode) {
-    this.stopCode = stopCode;
-  }
-
-  public Integer getStopCode() {
-    return this.stopCode;
-  }
-
-  public void setRunningJobs(ArrayList<String> runningJobs) {
+  public void setRunningJobs(ArrayList<ErrorInfo> runningJobs) {
     this.runningJobs = runningJobs;
   }
 
-  public ArrayList<String> getRunningJobs() {
+  public ArrayList<ErrorInfo> getRunningJobs() {
     return this.runningJobs;
+  }
+
+  public void setErrorInfo(ErrorInfo errorInfo) {
+    this.errorInfo = errorInfo;
+  }
+
+  public ErrorInfo getErrorInfo() {
+    return this.errorInfo;
   }
 }

@@ -72,7 +72,9 @@ public class ParseJson {
       }
       messageParams.put(PARAMS, request);
     }
-    messageParams.put(ID, jsonObj.get(ID));
+    if(jsonObj.has(ID)) {
+      messageParams.put(ID, jsonObj.get(ID));
+    }
 
     return messageParams;
   }

@@ -12,6 +12,7 @@ public class ParsedRequest implements Serializable {
 
   ParsedRequest(HashMap<String, Object> requestMap, SSLSocket socket) throws Exception {
     this.requestMap = new HashMap<String, Object>();
+    // Create deep copy of requestMap
     for(Map.Entry<String, Object> entry : requestMap.entrySet()) {
       ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
       ObjectOutputStream objOutStream = new ObjectOutputStream(byteOutStream);

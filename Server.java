@@ -14,40 +14,80 @@ public class Server {
     ArrayList<ErrorInfo> pids = new ArrayList<ErrorInfo>();
   
     try {
-      Credentials credentials = new Credentials();
+      /*Credentials credentials = new Credentials();
       SSLContext sslContext = credentials.init(SERVER_KEY_LOC);
 
       SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
-      SSLServerSocket sslServerSocket = (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);
+      SSLServerSocket sslServerSocket = (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);*/
+      SSLServerSocket sslServerSocket = socketSetUpHelper(SERVER_KEY_LOC);
       
       while(true) {
         ParsedRequest parsedRequest = new ParsedRequest();
 
         try {
-          parsedRequest = receiveAndParseJsonRequest(sslServerSocket);
+          SSLSocket sslSocket = authenticationHelper(sslServerSocket);
+          parsedRequest = receiveAndParseJsonRequest(sslSocket);
           Response response = handleRequest(parsedRequest, pids);
           sendResponse(parsedRequest, response);
+          // TODO close parseRequest
+          //parsedRequest.close();
         } catch(Exception e) {
+          // TODO remove
+          System.out.println("In inner catch");
           // TODO deal and then keep server running
           System.out.println(e.getClass().getName());
           System.out.println(e.getMessage());
         } finally {
-          if(parsedRequest != null) {
+          // TODO remove
+          System.out.println("In finally");
+          /*if(parsedRequest != null) {
             parsedRequest.close();
+          }*/
+          //parsedRequest.close();
+          try {
+            parsedRequest.close();
+          } catch(Exception e) {
+            // Catches only exceptions related to closing socket
+            // Should only be thrown if socket is not open
+            System.out.println("Socket was not available to close.");
           }
         }
       }    
     } catch(Exception e) {
+      // TODO remove 
+      System.out.println("in outter catch");
       System.out.println(e.getClass().getName());
       System.out.println(e.getMessage());
     }
   }
 
-  private static ParsedRequest receiveAndParseJsonRequest(SSLServerSocket sslServerSocket) throws Exception {
+  protected static SSLServerSocket socketSetUpHelper(String keyLocation) throws Exception {
+    Credentials credentials = new Credentials();
+    SSLContext sslContext = credentials.init(keyLocation);
+    
+    SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
+    return (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);
+  }
+
+  protected static SSLSocket authenticationHelper(SSLServerSocket sslServerSocket) throws Exception {
     SSLSocket sslSocket = (SSLSocket)sslServerSocket.accept();
 
     sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
     sslSocket.startHandshake();
+
+    return sslSocket;
+  }
+
+  private static ParsedRequest receiveAndParseJsonRequest(SSLSocket sslSocket) throws Exception {
+    /*SSLSocket sslSocket = (SSLSocket)sslServerSocket.accept();
+
+    sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
+    // TODO remove
+    System.out.println("Start handshake");
+    sslSocket.startHandshake();
+    System.out.println("Handshake started");*/
+
+    //SSLSocket sslSocket = authenticationHelper(sslServerSocket);
 
     InputStream inputStream = sslSocket.getInputStream();
     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);

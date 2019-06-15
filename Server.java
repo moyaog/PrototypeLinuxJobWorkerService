@@ -14,11 +14,6 @@ public class Server {
     ArrayList<ErrorInfo> pids = new ArrayList<ErrorInfo>();
   
     try {
-      /*Credentials credentials = new Credentials();
-      SSLContext sslContext = credentials.init(SERVER_KEY_LOC);
-
-      SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
-      SSLServerSocket sslServerSocket = (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);*/
       SSLServerSocket sslServerSocket = socketSetUpHelper(SERVER_KEY_LOC);
       
       while(true) {
@@ -29,33 +24,20 @@ public class Server {
           parsedRequest = receiveAndParseJsonRequest(sslSocket);
           Response response = handleRequest(parsedRequest, pids);
           sendResponse(parsedRequest, response);
-          // TODO close parseRequest
-          //parsedRequest.close();
         } catch(Exception e) {
-          // TODO remove
-          System.out.println("In inner catch");
-          // TODO deal and then keep server running
+          // deal with exception and then keep server running
           System.out.println(e.getClass().getName());
           System.out.println(e.getMessage());
+          e.printStackTrace();
         } finally {
-          // TODO remove
-          System.out.println("In finally");
-          /*if(parsedRequest != null) {
-            parsedRequest.close();
-          }*/
-          //parsedRequest.close();
           try {
             parsedRequest.close();
           } catch(Exception e) {
-            // Catches only exceptions related to closing socket
-            // Should only be thrown if socket is not open
             System.out.println("Socket was not available to close.");
           }
         }
       }    
     } catch(Exception e) {
-      // TODO remove 
-      System.out.println("in outter catch");
       System.out.println(e.getClass().getName());
       System.out.println(e.getMessage());
     }
@@ -79,16 +61,6 @@ public class Server {
   }
 
   private static ParsedRequest receiveAndParseJsonRequest(SSLSocket sslSocket) throws Exception {
-    /*SSLSocket sslSocket = (SSLSocket)sslServerSocket.accept();
-
-    sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
-    // TODO remove
-    System.out.println("Start handshake");
-    sslSocket.startHandshake();
-    System.out.println("Handshake started");*/
-
-    //SSLSocket sslSocket = authenticationHelper(sslServerSocket);
-
     InputStream inputStream = sslSocket.getInputStream();
     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
@@ -121,8 +93,6 @@ public class Server {
       errorInfo = exec.getOutputOfRunningJob(parsedRequest.getPid());
       response.setErrorInfo(errorInfo);
     } else {
-      // TODO improve
-      // TODO ERR_FAILED_TO_FIND_VALID_METHOD = 4;
       errorInfo.setErrorCode(ERR_FAILED_TO_FIND_VALID_METHOD);
       errorInfo.setErrorMessage("Failed to find valid method.");
       response.setErrorInfo(errorInfo);

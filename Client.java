@@ -29,10 +29,8 @@ public class Client {
 
       handleResponse(parsedResponse);
 
-      /*if(parsedResponse.isInitialized()) 
-        parsedResponse.close();*/
     } catch(Exception e) {
-      //e.printStackTrace();
+      e.printStackTrace();
       System.out.println(e.getClass().getName());
       System.out.println(e.getMessage());
     }
@@ -63,7 +61,6 @@ public class Client {
         completeJob += (" " + split[i]);
       }
       request.setProcess(completeJob);
-      //json = buildJson.buildRequest(request, START);
       return buildJson.buildRequest(request, START);
     } else if(split[COMMAND_LOC].toLowerCase().equals(STOP)) {
       if(split.length < MIN_ARGS) {
@@ -71,7 +68,6 @@ public class Client {
       }
       long pid = Long.parseLong(split[PID_OR_PROCESS_LOC]);
       request.setPid(pid);
-      //json = buildJson.buildRequest(request, STOP);
       return buildJson.buildRequest(request, STOP);
     } else if(split[COMMAND_LOC].toLowerCase().equals(QUERY)) {
       if(split.length < MIN_ARGS) {
@@ -79,10 +75,8 @@ public class Client {
       }
       long pid = Long.parseLong(split[PID_OR_PROCESS_LOC]);
       request.setPid(pid);
-      //json = buildJson.buildRequest(request, QUERY);
       return buildJson.buildRequest(request, QUERY);
     } else if(split[COMMAND_LOC].toLowerCase().equals(GET_CURRENT)) {
-      //json = buildJson.buildRequest(request, GET_CURRENT);
       return buildJson.buildRequest(request, GET_CURRENT);
     } else if(split[COMMAND_LOC].toLowerCase().equals(OUTPUT)) {
       if(split.length < MIN_ARGS) {
@@ -90,12 +84,10 @@ public class Client {
       }
       long pid = Long.parseLong(split[PID_OR_PROCESS_LOC]);
       request.setPid(pid);
-      //json = buildJson.buildRequest(request, OUTPUT);
       return buildJson.buildRequest(request, OUTPUT);
     } else {
       throw new Exception("No valid command provided");
     }
-    //return json;
   }
 
   protected static JSONObject readAndWriteJsonObjectHelper(SSLSocket sslSocket, JSONObject jsonObj) throws JSONException, Exception {
@@ -114,31 +106,9 @@ public class Client {
 
   private static ParsedResponse sendJsonRequest(JSONObject jsonRequest) throws Exception {
     try {
-      /*Credentials credentials = new Credentials();
-      SSLContext sslContext = credentials.init(CLIENT_KEY_LOC);
-
-      SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-      SSLSocket sslSocket = (SSLSocket)sslSocketFactory.createSocket(HOST, PORT);*/
-
       SSLSocket sslSocket = authenticationHelper(CLIENT_KEY_LOC);
-      //SSLSocket sslSocket = authenticationHelper(FAKE_KEY_LOC);
 
       try {
-        //sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
-        // TODO this might be last method to test for authentication
-        //sslSocket.startHandshake();
-
-        /*SSLSession sslSession = sslSocket.getSession();
-
-        OutputStream outputStream = sslSocket.getOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(jsonRequest.toString());
-        outputStream.flush();
-
-        InputStream inputStream = sslSocket.getInputStream();
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);      
-   
-        JSONObject jsonObjParsed = new JSONObject((String)objectInputStream.readObject());*/
         JSONObject jsonObjParsed = readAndWriteJsonObjectHelper(sslSocket, jsonRequest);
         ParseJson parseJson = new ParseJson();
         HashMap<String, Object> responseMap = parseJson.parseJson(jsonObjParsed);
@@ -149,18 +119,9 @@ public class Client {
         sslSocket.close();
         throw new Exception(e);
       }
-    
-    //return new ParsedResponse(responseMap);
-      //sslSocket.close();
     } catch(Exception e) {
-      //sslSocket.close();
       throw new Exception(e);
     }
-    
-    //sslSocket.close();
-
-    //return new ParsedResponse(responseMap, sslSocket);
-    //return new ParsedResponse(responseMap);
   }
 
   protected static SSLSocket authenticationHelper(String keyLocation) throws SSLHandshakeException, Exception {

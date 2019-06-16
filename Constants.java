@@ -31,8 +31,4 @@ public class Constants{
   public static final int ERR_FAILED_TO_FIND = 2;
   public static final int ERR_FAILED_TO_START = 3;
   public static final int ERR_FAILED_TO_FIND_VALID_METHOD = 4;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ClientServerBranch

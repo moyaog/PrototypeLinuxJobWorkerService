@@ -6,9 +6,10 @@ import java.io.*;
 //import java.util.Stream;
 
 public class ExecuteJobs {
-  public ErrorInfo start(String sProcess) throws IOException {
+  public ErrorInfo start(String sProcess) throws IOException, InterruptedException {
     ErrorInfo errorInfo = new ErrorInfo();
     Process process = Runtime.getRuntime().exec(sProcess);
+    process.waitFor();
 
     ErrorInfo errorStatus = getProcessStatus(process.pid());
     if(errorStatus.getIoMessage() == null) {
@@ -22,7 +23,7 @@ public class ExecuteJobs {
     return errorInfo;
   }
 
-  public ErrorInfo stop(long pid) throws IOException {
+  public ErrorInfo stop(long pid) throws IOException, InterruptedException {
     ErrorInfo errorInfo = new ErrorInfo();
 
     ErrorInfo errorStatus = getProcessStatus(pid);
@@ -32,7 +33,8 @@ public class ExecuteJobs {
       return errorInfo;
     }
 
-    Runtime.getRuntime().exec("kill " + pid);
+    Process process = Runtime.getRuntime().exec("kill " + pid);
+    process.waitFor();
     errorStatus = getProcessStatus(pid);
     if(errorStatus.getIoMessage() != null) {
       errorInfo.setErrorCode(ERR_FAILED_TO_KILL);
@@ -45,7 +47,7 @@ public class ExecuteJobs {
     return errorInfo;     
   }
 
-  public ErrorInfo query(long pid) throws IOException {
+  public ErrorInfo query(long pid) throws IOException, InterruptedException {
     ErrorInfo errorInfo = new ErrorInfo();
 
     ErrorInfo errorStatus = getProcessStatus(pid);
@@ -61,7 +63,7 @@ public class ExecuteJobs {
     return errorInfo;
   }
 
-  public ArrayList<ErrorInfo> currentJobStatus(ArrayList<ErrorInfo> pids) throws IOException {
+  public ArrayList<ErrorInfo> currentJobStatus(ArrayList<ErrorInfo> pids) throws IOException, InterruptedException {
     ArrayList<ErrorInfo> statuses = new ArrayList<ErrorInfo>();
 
     int i = 0;
@@ -74,6 +76,7 @@ public class ExecuteJobs {
         continue;
       }
       Process process = Runtime.getRuntime().exec("ps -p " + pid + " -o comm=");
+      process.waitFor();
       BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       temp.setErrorCode(ERR_SUCCESS);
@@ -87,10 +90,11 @@ public class ExecuteJobs {
     return statuses;
   }
 
-  public ErrorInfo getOutputOfRunningJob(long pid) throws IOException {
+  public ErrorInfo getOutputOfRunningJob(long pid) throws IOException, InterruptedException {
     ErrorInfo errorInfo = new ErrorInfo();
 
     Process process = Runtime.getRuntime().exec("cat /proc/" + pid + "/fd/1");
+    process.waitFor();
     BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
     BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
@@ -107,10 +111,11 @@ public class ExecuteJobs {
     return errorInfo;
   }
   
-  private ErrorInfo getProcessStatus(long pid) throws IOException {
+  private ErrorInfo getProcessStatus(long pid) throws IOException, InterruptedException {
     // This implementation method allows the user to pass in any pid
     // The user can get the status of any PID running on the system
     Process process = Runtime.getRuntime().exec("ps -q " + pid + " -o state --no-headers");
+    process.waitFor();
     BufferedReader processInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
     BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
   

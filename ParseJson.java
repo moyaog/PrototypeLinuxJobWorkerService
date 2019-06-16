@@ -10,6 +10,8 @@ public class ParseJson {
 
     if(jsonObj.has(METHOD)) {
       messageParams.put(METHOD, jsonObj.getString(METHOD));
+    } else {
+      messageParams.put(METHOD, "na");
     } 
     if(jsonObj.has(RESULT)) {
       JSONObject res = jsonObj.getJSONObject(RESULT);
@@ -18,7 +20,10 @@ public class ParseJson {
         JSONArray jobArray = res.getJSONArray(RUNNING_JOBS);
         ArrayList<ErrorInfo> errorInfoArray = new ArrayList<ErrorInfo>();
         for(int i = 0; i < jobArray.length(); i++) {
+<<<<<<< HEAD
           // TODO create parse ErrorInfo object helper method
+=======
+>>>>>>> ClientServerBranch
           JSONObject tempJsonObj = jobArray.getJSONObject(i);
           ErrorInfo tempErrorInfo = new ErrorInfo();
           if(!JSONObject.NULL.equals(tempJsonObj.get(ERROR_CODE))) {
@@ -37,7 +42,10 @@ public class ParseJson {
         }
         response.setRunningJobs(errorInfoArray);
       }
+<<<<<<< HEAD
       // TODO call parse ErrorInfo object helper method
+=======
+>>>>>>> ClientServerBranch
       if(!JSONObject.NULL.equals(res.get(ERROR_INFO))) {
         JSONObject err = res.getJSONObject(ERROR_INFO);
         ErrorInfo errorInfo = new ErrorInfo();
@@ -51,8 +59,11 @@ public class ParseJson {
           errorInfo.setErrorMessage((String)err.get(ERROR_MESSAGE));
         }
         if(!JSONObject.NULL.equals(err.get(PID))) {
+<<<<<<< HEAD
           //Long tempPid = ((Number)err.get(PID)).longValue();
           //errorInfo.setPid(tempPid);
+=======
+>>>>>>> ClientServerBranch
           errorInfo.setPid(((Number)err.get(PID)).longValue());
         }
         response.setErrorInfo(errorInfo);

@@ -126,7 +126,7 @@ public class Client {
 
   protected static SSLSocket authenticationHelper(String keyLocation) throws SSLHandshakeException, Exception {
     Credentials credentials = new Credentials();
-    SSLContext sslContext = credentials.init(keyLocation);
+    SSLContext sslContext = credentials.init(keyLocation, CLIENT_PASSWORD);
     
     SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
     SSLSocket sslSocket = (SSLSocket)sslSocketFactory.createSocket(HOST, PORT);

@@ -7,12 +7,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 public class Credentials {
-  SSLContext init(String keyLocation) throws Exception {
+  SSLContext init(String keyLocation, String password) throws Exception {
     KeyStore keyStore = KeyStore.getInstance(KEY_STORE);
-    keyStore.load(new FileInputStream(keyLocation), PASSWORD.toCharArray());
+    keyStore.load(new FileInputStream(keyLocation), password.toCharArray());
 
     KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(TRUST_MANAGER);
-    keyManagerFactory.init(keyStore, PASSWORD.toCharArray());
+    keyManagerFactory.init(keyStore, password.toCharArray());
 
     TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TRUST_MANAGER);
     trustManagerFactory.init(keyStore);

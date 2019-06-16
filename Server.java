@@ -45,7 +45,7 @@ public class Server {
 
   protected static SSLServerSocket socketSetUpHelper(String keyLocation) throws Exception {
     Credentials credentials = new Credentials();
-    SSLContext sslContext = credentials.init(keyLocation);
+    SSLContext sslContext = credentials.init(keyLocation, SERVER_PASSWORD);
     
     SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
     return (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);

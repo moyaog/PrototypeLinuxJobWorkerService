@@ -24,5 +24,14 @@ $ javac Constants.java HardCodes.java Request.java Response.java BuildJson.java 
 ```
 
 ## Start Server
+Start the Server using the following command
+```bash
+$ java Server
+```
 
 ## Start Client
+Start the Client using the following command
+```bash
+$ java Client
+```
+Each time you run the Client, you have the opportunity to send one command to the Server and receive the response before the Client ends. Any processes you start will still be running on the Server unless the Server is shutdown or the process finishes running. 

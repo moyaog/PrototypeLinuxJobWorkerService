@@ -2,6 +2,7 @@ import java.util.stream.*;
 import java.io.Serializable;
 import java.util.*;
 
+// ErrorInfo contains methods that update and return the values in it's data fields
 public class ErrorInfo implements Serializable {
   private static final long serialVersionUID = 1L;
 
@@ -10,6 +11,7 @@ public class ErrorInfo implements Serializable {
   private String errorMessage;
   private Long pid;
 
+  // Constructor
   ErrorInfo() {
     this.errorCode = null;
     this.ioMessage = null;

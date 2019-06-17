@@ -1,5 +1,6 @@
 import java.io.Serializable;
 
+// Request contains data fields, constructors, and getters and setters for each field
 public class Request implements Serializable {
   private static final long serialVersionUID = 1L;
 

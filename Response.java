@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.*;
 
+// Response contains data fields, a constructor, and getters and setters for each field
 public class Response implements Serializable {
   private static final long serialVersionUID = 1L;
 

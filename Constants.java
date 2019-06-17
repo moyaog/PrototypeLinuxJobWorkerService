@@ -1,5 +1,6 @@
 package my;
 
+// Constants contains constants used in at least both Server and Client
 public class Constants{
   private Constants() {}
 

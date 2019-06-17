@@ -10,9 +10,11 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
 public class Server {
+  // main method of Server
   public static void main(String[] args) {
+    // ArrayList of started processes
     ArrayList<ErrorInfo> pids = new ArrayList<ErrorInfo>();
-  
+
     try {
       SSLServerSocket sslServerSocket = socketSetUpHelper(SERVER_KEY_LOC);
       
@@ -25,11 +27,12 @@ public class Server {
           Response response = handleRequest(parsedRequest, pids);
           sendResponse(parsedRequest, response);
         } catch(Exception e) {
-          // deal with exception and then keep server running
+          // If exception is caught, print message, and then keep server running
           System.out.println(e.getClass().getName());
           System.out.println(e.getMessage());
           e.printStackTrace();
         } finally {
+          // Always try to close the socket 
           try {
             parsedRequest.close();
           } catch(Exception e) {
@@ -37,12 +40,15 @@ public class Server {
           }
         }
       }    
+    // If exception is caught, Server should stop running
     } catch(Exception e) {
       System.out.println(e.getClass().getName());
       System.out.println(e.getMessage());
     }
   }
 
+  // socketSetUpHelper initializes Credentials object, and creates and returns SSLServerSocket
+  // This method is protected for testing purposes
   protected static SSLServerSocket socketSetUpHelper(String keyLocation) throws Exception {
     Credentials credentials = new Credentials();
     SSLContext sslContext = credentials.init(keyLocation, SERVER_PASSWORD);
@@ -51,6 +57,8 @@ public class Server {
     return (SSLServerSocket)sslServerSocketFactory.createServerSocket(PORT);
   }
 
+  // authenticationHelper creates and returns SSLSocket
+  // This method is protected for testing purposes
   protected static SSLSocket authenticationHelper(SSLServerSocket sslServerSocket) throws Exception {
     SSLSocket sslSocket = (SSLSocket)sslServerSocket.accept();
 
@@ -60,10 +68,14 @@ public class Server {
     return sslSocket;
   }
 
+  // receiveAndParseJsonRequest reads in Client request, parses the request, and returns
+  // a ParsedRequest object
   private static ParsedRequest receiveAndParseJsonRequest(SSLSocket sslSocket) throws Exception {
+    // Read in request from Client
     InputStream inputStream = sslSocket.getInputStream();
     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
+    // Initialize JSONObject with Client request and parse JSONObject
     JSONObject jsonObjParsed = new JSONObject((String)objectInputStream.readObject());
     ParseJson parseJson = new ParseJson();
     HashMap<String, Object> jsonMap = parseJson.parseJson(jsonObjParsed);
@@ -71,6 +83,10 @@ public class Server {
     return new ParsedRequest(jsonMap, sslSocket);
   }
 
+  // handleRequest accepts a ParsedRequest object and ArrayList<ErrorInfo> containing running 
+  // processes. The method will use the ParsedRequest object values to decide which method in the 
+  // ExecuteJobs class will be called, call the appropriate method, and then create and return
+  // a Response object
   private static Response handleRequest(ParsedRequest parsedRequest, ArrayList<ErrorInfo> pids) throws Exception {
     Response response = new Response();
     ExecuteJobs exec = new ExecuteJobs();
@@ -78,6 +94,7 @@ public class Server {
 
     if(parsedRequest.getMethod().equals(START)) {
       errorInfo = exec.start(parsedRequest.getProcess());
+      // Process started, add associated ErrorInfo object to ArrayList<ErrorInfo> pids
       pids.add(errorInfo);
       response.setErrorInfo(errorInfo);
     } else if(parsedRequest.getMethod().equals(STOP)) {
@@ -101,11 +118,15 @@ public class Server {
     return response;
   }
 
+  // sendResponse accepts a ParsedRequest object and a Response object, builds a new response
+  // JSONObject, and sends it back to the Client.
   private static void sendResponse(ParsedRequest parsedRequest, Response response) throws Exception {
+    // Build JSONObject
     JSONObject json = new JSONObject();
     BuildJson buildJson = new BuildJson();
     json = buildJson.buildResponse(response, parsedRequest.getId());
 
+    // Send JSONObject to Client
     OutputStream outputStream = parsedRequest.getSocket().getOutputStream();
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
     objectOutputStream.writeObject(json.toString());

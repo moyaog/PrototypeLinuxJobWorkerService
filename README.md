@@ -18,6 +18,10 @@ After cloning the repository, it is necessary to finish the HardCodes class. The
 - CLIENT_PASSWORD: the password fot the Client's keystore
 
 ## Build Project
+Build the project using the following commands
+```bash
+$ javac Constants.java HardCodes.java Request.java Response.java BuildJson.java ParseJson.java ParsedRequest.java ParsedResponse.java Credentials.java ErrorInfo.java ExecuteJobs.java Client.java Server.java
+```
 
 ## Start Server
 

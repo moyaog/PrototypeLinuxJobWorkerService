@@ -1,6 +1,9 @@
 # PrototypeLinuxJobWorkerService
 
 ## Clone Repository
+```bash
+https://github.com/moyaog/PrototypeLinuxJobWorkerService.git
+```
 
 ## Make HardCodes.java
 After cloning the repository, it is necessary to finish the HardCodes class. The HardCodes class contains hardcoded values for implementation ease. You will need to provide

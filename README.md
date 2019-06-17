@@ -3,8 +3,8 @@
 ## Clone Repository
 To clone the repository, use the following commands
 ```bash
-git clone https://github.com/moyaog/PrototypeLinuxJobWorkerService.git
-cd PrototypeLinuxJobWorkerService
+$ git clone https://github.com/moyaog/PrototypeLinuxJobWorkerService.git
+$ cd PrototypeLinuxJobWorkerService
 ```
 
 ## Make HardCodes.java

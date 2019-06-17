@@ -1,8 +1,8 @@
 # PrototypeLinuxJobWorkerService
 
-## Build Instructions
+## Clone Repository
 
-### Make HardCodes.java
+## Make HardCodes.java
 After cloning the repository, it is necessary to finish the HardCodes class. The HardCodes class contains hardcoded values for implementation ease. You will need to provide
 - HOST: the IP address of the Server
 - PORT: the Server port number
@@ -12,3 +12,8 @@ After cloning the repository, it is necessary to finish the HardCodes class. The
 - SERVER_PASSWORD: the password for the Server's keystore
 - CLIENT_PASSWORD: the password fot the Client's keystore
 
+## Build Project
+
+## Start Server
+
+## Start Client
